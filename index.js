@@ -5,9 +5,19 @@ const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, Collection, ObjectId } = require('mongodb');
 require('dotenv').config()
 
+
+// const EventEmitter = require('events');
+// const bus = new EventEmitter();
+// const stripe = require('stripe')
+
+
+
 // middleware
-app.use(cors());
-app.use(express.json());
+
+app.use(cors())
+app.use(express.static("public"))
+app.use(express.json())
+
 
 // uri
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.zmpua4z.mongodb.net/?retryWrites=true&w=majority`;
@@ -41,6 +51,10 @@ async function run() {
   }
 }
 run().catch(console.dir);
+
+app.get('/', (req, res) => {
+  res.send('Knowledge want to learn')
+})
 
 // Start the server
 app.listen(port, () => {
