@@ -29,91 +29,97 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await
     client.connect();
-    // db and Collection
 
+    // db and Collection
 
     const userCollection = client.db('SummarCamp').collection('users')
     const classCollection = client.db('SummarCamp').collection('Classes')
     const selectedClassCollection = client.db('SummarCamp').collection('selectedClass')
     const enrolledClassCollection = client.db('SummarCamp').collection('enrolledClass')
-   
+    const instructorsCollection = client.db('SummarCamp').collection('allInstructors')
+    const paymentCollection = client.db('SummarCamp').collection('payment')
 
 
+    //instructor api
+    app.get('/instructors', async (req, res) => {
+      const result = await instructorsCollection.find().toArray()
+      res.send(result)
+    })
 
-  //classes api
-  app.post('/all-classes', async (req, res) => {
-    const classes = req.body
-    const result = await classCollection.insertOne(classes)
-    res.send(result)
-})
-app.post('/selected-class', async (req, res) => {
-    const selectedClass = req.body;
-    const result = await selectedClassCollection.insertOne(selectedClass)
-    res.send(result)
-})
-app.get('/selected-classes', async (req, res) => {
-    const email = req.query.email;
-    const query = { studentEmail: email }
-    const result = await selectedClassCollection.find(query).toArray()
-    res.send(result)
-})
-app.get('/selected-class/:id', async (req, res) => {
-    const id = req.params.id;
-    const query = { _id: new ObjectId(id) }
-    const result = await selectedClassCollection.findOne(query)
-    res.send(result)
-})
-app.delete('/selected-classes/:id', async (req, res) => {
-    const id = req.params.id;
-    const query = { _id: new ObjectId(id) }
-    const result = await selectedClassCollection.deleteOne(query)
-    res.send(result)
-})
-app.get('/all-classes', async (req, res) => {
-    const result = await classCollection.find().toArray()
-    res.send(result)
-})
-app.get('/all-classes', async (req, res) => {
-    const email = req.query.email;
-    const query = { instructorEmail: email }
-    const result = await classCollection.find(query).toArray()
-    res.send(result)
-})
-app.put('/all-classes/:id', async (req, res) => {
-    const id = req.params.id;
-    const status = req.query.status;
-    const feedback = req.query.feedback;
-    if (status == 'approved') {
+    //classes api
+    app.post('/all-classes', async (req, res) => {
+      const classes = req.body
+      const result = await classCollection.insertOne(classes)
+      res.send(result)
+    })
+    app.post('/selected-class', async (req, res) => {
+      const selectedClass = req.body;
+      const result = await selectedClassCollection.insertOne(selectedClass)
+      res.send(result)
+    })
+    app.get('/selected-classes', async (req, res) => {
+      const email = req.query.email;
+      const query = { studentEmail: email }
+      const result = await selectedClassCollection.find(query).toArray()
+      res.send(result)
+    })
+    app.get('/selected-class/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await selectedClassCollection.findOne(query)
+      res.send(result)
+    })
+    app.delete('/selected-classes/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await selectedClassCollection.deleteOne(query)
+      res.send(result)
+    })
+    app.get('/all-classes', async (req, res) => {
+      const result = await classCollection.find().toArray()
+      res.send(result)
+    })
+    app.get('/all-classes', async (req, res) => {
+      const email = req.query.email;
+      const query = { instructorEmail: email }
+      const result = await classCollection.find(query).toArray()
+      res.send(result)
+    })
+    app.put('/all-classes/:id', async (req, res) => {
+      const id = req.params.id;
+      const status = req.query.status;
+      const feedback = req.query.feedback;
+      if (status == 'approved') {
         const query = { _id: new ObjectId(id) }
         const updatedDoc = {
-            $set: {
-                status: 'Approved'
-            }
+          $set: {
+            status: 'Approved'
+          }
         }
         const result = await classCollection.updateOne(query, updatedDoc)
         res.send(result)
-    }
-    if (status == 'denied') {
+      }
+      if (status == 'denied') {
         const query = { _id: new ObjectId(id) }
         const updatedDoc = {
-            $set: {
-                status: 'Denied'
-            }
+          $set: {
+            status: 'Denied'
+          }
         }
         const result = await classCollection.updateOne(query, updatedDoc)
         res.send(result)
-    }
-    if (feedback) {
+      }
+      if (feedback) {
         const query = { _id: new ObjectId(id) }
         const updatedDoc = {
-            $set: {
-                feedback: feedback
-            }
+          $set: {
+            feedback: feedback
+          }
         }
         const result = await classCollection.updateOne(query, updatedDoc)
         res.send(result)
-    }
-})
+      }
+    })
 
 
     //users api
@@ -170,6 +176,7 @@ app.put('/all-classes/:id', async (req, res) => {
     })
 
 
+    
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
