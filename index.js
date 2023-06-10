@@ -199,7 +199,29 @@ async function run() {
         res.status(500).send({ error: "An error occurred while creating the PaymentIntent." });
       }
     });
+    app.post('/payment', async (req, res) => {
+      const payment = req.body;
+      const insertResult = await paymentCollection.insertOne(payment);
 
+      const enrolledQuery = { studentEmail: payment.email, classId: payment.classId }
+      const enrolledClass = await selectedClassCollection.findOne(enrolledQuery)
+      const enrolledInsertResult = await enrolledClassCollection.insertOne(enrolledClass)
+
+      const enrolledDeleteResult = await selectedClassCollection.deleteOne(enrolledQuery)
+
+      const classQuery = { _id: new ObjectId(payment.classId) };
+      const classDocument = await classCollection.findOne(classQuery); // Fetch the latest document
+
+      if (classDocument && classDocument.seats > 0) {
+        const updatedSeats = classDocument.seats - 1; // Calculate the updated seats value
+        const updateResult = await classCollection.updateOne(
+          classQuery,
+          { $set: { seats: updatedSeats } }
+        );
+
+        res.send({ insertResult, updateResult, enrolledDeleteResult, enrolledInsertResult });
+      }
+    });
     app.get('/enrolled-classes', async (req, res) => {
       const result = await enrolledClassCollection.find().toArray()
       res.send(result)
