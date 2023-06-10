@@ -199,7 +199,19 @@ async function run() {
         res.status(500).send({ error: "An error occurred while creating the PaymentIntent." });
       }
     });
-    
+
+    app.get('/enrolled-classes', async (req, res) => {
+      const result = await enrolledClassCollection.find().toArray()
+      res.send(result)
+    })
+    app.get('/payment-history', async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email }
+      const result = await paymentCollection.find(query).toArray()
+      res.send(result)
+    })
+
+    // -----END-----
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
