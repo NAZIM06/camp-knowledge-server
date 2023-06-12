@@ -42,11 +42,9 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    // await
-    client.connect();
+    // awaitclient.connect();
 
     // db and Collection
-
     const userCollection = client.db('SummarCamp').collection('users')
     const classCollection = client.db('SummarCamp').collection('Classes')
     const selectedClassCollection = client.db('SummarCamp').collection('selectedClass')
@@ -56,7 +54,7 @@ async function run() {
     // JWT
     app.post('/jwt', (req, res) => {
       const user = req.body;
-      const token = jwt.sign(user, process.env.JWT_ACCESS_TOKEN, { expiresIn: '10h' })
+      const token = jwt.sign(user, process.env.JWT_ACCESS_TOKEN, { expiresIn: '1h' })
       res.send({ token })
     })
 
@@ -279,8 +277,7 @@ async function run() {
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    // await 
-    client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
