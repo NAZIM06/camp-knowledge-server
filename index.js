@@ -4,8 +4,8 @@ const app = express();
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, Collection, ObjectId } = require('mongodb');
 require('dotenv').config()
-const EventEmitter = require('events');
 const stripe = require('stripe')
+const jwt = require('jsonwebtoken');
 
 // middleware
 app.use(cors())
