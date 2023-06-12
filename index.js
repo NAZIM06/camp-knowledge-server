@@ -93,12 +93,10 @@ async function run() {
       const result = await classCollection.find(query).toArray()
       res.send(result)
     })
-    app.get('/all-classes', verifyJWT, async (req, res) => {
-      const email = req.query.email;
-      const query = { instructorEmail: email }
-      const result = await classCollection.find(query).toArray()
+    app.get('/all-classes',verifyJWT,  async (req, res) => {
+      const result = await classCollection.find().sort({date : -1}).toArray()
       res.send(result)
-    })
+  })
     app.get('/all-classes/:email', verifyJWT, async (req, res) => {
       const email = req.params.email;
       const query = { instructorEmail: email }
@@ -192,6 +190,11 @@ async function run() {
       const result = await userCollection.find().toArray()
       res.send(result)
     })
+    app.get('/all-instructors', async (req, res) => {
+      const query = { role: 'instructor' }
+      const result = await userCollection.find(query).toArray()
+      res.send(result)
+    })
     app.put('/all-users/:id', verifyJWT, async (req, res) => {
       const id = req.params.id;
       const role = req.query.role;
@@ -204,11 +207,7 @@ async function run() {
       const result = await userCollection.updateOne(query, updatedDoc)
       res.send(result)
     })
-    app.get('/all-instructors', async (req, res) => {
-      const query = { role: 'instructor' }
-      const result = await userCollection.find(query).toArray()
-      res.send(result)
-    })
+    
     app.get('/popular-instructors', async (req, res) => {
       const query = { role: 'instructor' }
       const result = await userCollection.find(query).toArray()
